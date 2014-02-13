@@ -7,6 +7,8 @@
 //
 
 #include <ApplicationServices/ApplicationServices.h>
+#include <Foundation/Foundation.h>
+#include <AppKit/AppKit.h>
 
 // alterkeys.c
 // http://osxbook.com
@@ -49,7 +51,17 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef
 
 
 int main(int argc, const char **argv) {
-    printf("Hello, world\n");
+
+    @autoreleasepool {
+        NSLog(@"Hello, world!");
+
+        NSArray *windows = CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID));
+        for (NSDictionary *windowInfo in windows) {
+            NSString *windowPid = windowInfo[(__bridge NSString*)kCGWindowOwnerPID];
+            NSString *windowName = windowInfo[(__bridge NSString*)kCGWindowOwnerName];
+            NSLog(@"pid %@ name %@", windowPid, windowName);
+        }
+    }
 
 /*    CFMachPortRef      eventTap;
     CGEventMask        eventMask;
