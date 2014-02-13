@@ -52,48 +52,43 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef
 /* Carbon includes everything necessary for Accessibilty API */
 #include <Carbon/Carbon.h>
 
-static bool amIAuthorized ()
-{
-    if (AXAPIEnabled() != 0) {
-        /* Yehaa, all apps are authorized */
-        return true;
-    }
-    /* Bummer, it's not activated, maybe we are trusted */
-    if (AXIsProcessTrusted() != 0) {
-        /* Good news, we are already trusted */
-        return true;
-    }
-    /* Crap, we are not trusted...
-     * correct behavior would now be to become a root process using
-     * authorization services and then call AXMakeProcessTrusted() to make
-     * ourselves trusted, then restart... I'll skip this here for
-     * simplicity.
-     */
-    return false;
+bool appIsAuthorized() {
+    return AXAPIEnabled() || AXIsProcessTrusted();
 }
 
-
-static AXUIElementRef getFrontMostApp ()
-{
+void setForegroundWindowRect(CGRect rect) {
     pid_t pid;
     ProcessSerialNumber psn;
+    AXUIElementRef app;
+    AXUIElementRef window;
+    AXValueRef axValue;
 
+    // Get front app.
     GetFrontProcess(&psn);
     GetProcessPID(&psn, &pid);
-    return AXUIElementCreateApplication(pid);
-}
+    app = AXUIElementCreateApplication(pid);
 
+    // Get front app's front window.
+    AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute, (CFTypeRef *)&window);
+
+    // Set window position.
+    axValue = AXValueCreate(kAXValueCGPointType, &rect.origin);
+    AXUIElementSetAttributeValue(window, kAXPositionAttribute, axValue);
+    CFRelease(axValue);
+
+    // Set window size.
+    axValue = AXValueCreate(kAXValueCGSizeType, &rect.size);
+    AXUIElementSetAttributeValue(window, kAXSizeAttribute, axValue);
+    CFRelease(axValue);
+
+    CFRelease(window);
+    CFRelease(app);
+}
 
 int main(int argc, const char **argv) {
     int i;
-    AXValueRef temp;
-    CGSize windowSize;
-    CGPoint windowPosition;
-    CFStringRef windowTitle;
-    AXUIElementRef frontMostApp;
-    AXUIElementRef frontMostWindow;
 
-    if (!amIAuthorized()) {
+    if (!appIsAuthorized()) {
         printf("Can't use accessibility API!\n");
         return 1;
     }
@@ -112,96 +107,8 @@ int main(int argc, const char **argv) {
         }
     }
 
-    /* Here we go. Find out which process is front-most */
-    frontMostApp = getFrontMostApp();
-
-    /* Get the front most window. We could also get an array of all windows
-     * of this process and ask each window if it is front most, but that is
-     * quite inefficient if we only need the front most window.
-     */
-    AXUIElementCopyAttributeValue(
-                                  frontMostApp, kAXFocusedWindowAttribute, (CFTypeRef *)&frontMostWindow
-                                  );
-
-    /* Get the title of the window */
-    AXUIElementCopyAttributeValue(
-                                  frontMostWindow, kAXTitleAttribute, (CFTypeRef *)&windowTitle
-                                  );
-
-    /* Get the window size and position */
-    AXUIElementCopyAttributeValue(
-                                  frontMostWindow, kAXSizeAttribute, (CFTypeRef *)&temp
-                                  );
-    AXValueGetValue(temp, kAXValueCGSizeType, &windowSize);
-    CFRelease(temp);
-
-    AXUIElementCopyAttributeValue(
-                                  frontMostWindow, kAXPositionAttribute, (CFTypeRef *)&temp
-                                  );
-    AXValueGetValue(temp, kAXValueCGPointType, &windowPosition);
-    CFRelease(temp);
-
-    /* Print everything */
-    printf("\n");
-    CFShow(windowTitle);
-    printf(
-           "Window is at (%f, %f) and has dimension of (%f, %f)\n",
-           windowPosition.x,
-           windowPosition.y,
-           windowSize.width,
-           windowSize.height
-           );
-
-    /* Move the window to the right by 25 pixels */
-    windowPosition.x += 25;
-    temp = AXValueCreate(kAXValueCGPointType, &windowPosition);
-    AXUIElementSetAttributeValue(frontMostWindow, kAXPositionAttribute, temp);
-    CFRelease(temp);
-    
-    /* Clean up */
-    CFRelease(frontMostWindow);
-    CFRelease(frontMostApp);
-    return 0;
-}
-
-
-
-int main(int argc, const char **argv) {
-
-    @autoreleasepool {
-        NSLog(@"Hello, world!");
-
-        NSArray *windows = CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID));
-        for (NSDictionary *windowInfo in windows) {
-            NSString *windowPid = windowInfo[(__bridge NSString*)kCGWindowOwnerPID];
-            NSString *windowName = windowInfo[(__bridge NSString*)kCGWindowOwnerName];
-            NSLog(@"pid %@ name %@", windowPid, windowName);
-        }
-    }
-
-/*    CFMachPortRef      eventTap;
-    CGEventMask        eventMask;
-    CFRunLoopSourceRef runLoopSource;
-
-    // Create an event tap. We are interested in key presses.
-    eventMask = ((1 << kCGEventKeyDown) | (1 << kCGEventKeyUp));
-    eventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, 0, eventMask, myCGEventCallback, NULL);
-    if (!eventTap) {
-        fprintf(stderr, "failed to create event tap\n");
-        exit(1);
-    }
-
-    // Create a run loop source.
-    runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0);
-
-    // Add to the current run loop.
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopCommonModes);
-
-    // Enable the event tap.
-    CGEventTapEnable(eventTap, true); */
-
-    // Set it all running.
-    CFRunLoopRun();
-
+    CGRect screenRect = [NSScreen mainScreen].visibleFrame;
+    CGRect leftScreenHalf = CGRectMake(0, 0, screenRect.size.width / 2, screenRect.size.height);
+    setForegroundWindowRect(leftScreenHalf);
     return 0;
 }

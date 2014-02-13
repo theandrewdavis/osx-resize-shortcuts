@@ -11,6 +11,7 @@
 		4904D95E18A9891700E59ECE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4904D95D18A9891700E59ECE /* main.m */; };
 		4904D96218A9891700E59ECE /* ResizeShortcuts.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4904D96118A9891700E59ECE /* ResizeShortcuts.1 */; };
 		4904D96918A98BC100E59ECE /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4904D96818A98BC100E59ECE /* ApplicationServices.framework */; };
+		49EEAFA218AD271600E957DC /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49EEAFA118AD271600E957DC /* AppKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +33,7 @@
 		4904D95D18A9891700E59ECE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4904D96118A9891700E59ECE /* ResizeShortcuts.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ResizeShortcuts.1; sourceTree = "<group>"; };
 		4904D96818A98BC100E59ECE /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		49EEAFA118AD271600E957DC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49EEAFA218AD271600E957DC /* AppKit.framework in Frameworks */,
 				4904D96918A98BC100E59ECE /* ApplicationServices.framework in Frameworks */,
 				4904D95B18A9891700E59ECE /* Foundation.framework in Frameworks */,
 			);
@@ -67,6 +70,7 @@
 		4904D95918A9891700E59ECE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				49EEAFA118AD271600E957DC /* AppKit.framework */,
 				4904D96818A98BC100E59ECE /* ApplicationServices.framework */,
 				4904D95A18A9891700E59ECE /* Foundation.framework */,
 			);
