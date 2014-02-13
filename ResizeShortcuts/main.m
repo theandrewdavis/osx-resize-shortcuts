@@ -9,53 +9,65 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
+#include <Carbon/Carbon.h>
 
-// alterkeys.c
-// http://osxbook.com
-//
-// Complile using the following command line:
-//     gcc -Wall -o alterkeys alterkeys.c -framework ApplicationServices
-//
-// You need superuser privileges to create the event tap, unless accessibility
-// is enabled. To do so, select the "Enable access for assistive devices"
-// checkbox in the Universal Access system preference pane.
+CGEventRef cgEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon);
+void setForegroundWindowRect(CGRect rect);
 
+int main(int argc, const char **argv) {
+    CFMachPortRef eventTap;
+    CFRunLoopSourceRef runLoopSource;
 
-// This callback will be invoked every time there is a keystroke.
-//
-CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
-    printf("Key code!\n");
-
-    // Paranoid sanity check.
-    if ((type != kCGEventKeyDown) && (type != kCGEventKeyUp)) {
-        return event;
+    // Make sure this app is authorized to use the accessibility API.
+    if (!AXAPIEnabled() && !AXIsProcessTrusted()) {
+        printf("Can't use accessibility API!\n");
+        return 1;
     }
 
-    // The incoming keycode.
-    CGKeyCode keycode = (CGKeyCode)CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+    // Set up a keyboard hook callback.
+    eventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, CGEventMaskBit(kCGEventKeyUp), cgEventCallback, NULL);
+    runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0);
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopCommonModes);
+    CGEventTapEnable(eventTap, true);
+    CFRunLoopRun();
+    return 0;
+}
 
-    // Swap 'a' (keycode=0) and 'z' (keycode=6).
-    if (keycode == (CGKeyCode)0) {
-        keycode = (CGKeyCode)6;
+// Respond to keypresses and call window resize functions when needed.
+CGEventRef cgEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
+    static const int kLeftKey = 123;
+    static const int kRightKey = 124;
+    static const int kUpKey = 126;
+
+    CGEventFlags flags;
+    CGKeyCode keycode;
+    CGRect fullScreenRect;
+    CGRect partialScreenRect;
+    if (type == kCGEventKeyUp) {
+        flags = CGEventGetFlags(event);
+        if (flags & kCGEventFlagMaskCommand && flags & kCGEventFlagMaskAlternate) {
+            keycode = (CGKeyCode)CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+            switch (keycode) {
+                case kLeftKey:
+                    fullScreenRect = [NSScreen mainScreen].visibleFrame;
+                    partialScreenRect = CGRectMake(0, 0, fullScreenRect.size.width / 2, fullScreenRect.size.height);
+                    setForegroundWindowRect(partialScreenRect);
+                    return NULL;
+                case kRightKey:
+                    fullScreenRect = [NSScreen mainScreen].visibleFrame;
+                    partialScreenRect = CGRectMake(fullScreenRect.size.width / 2, 0, fullScreenRect.size.width / 2, fullScreenRect.size.height);
+                    setForegroundWindowRect(partialScreenRect);
+                    return NULL;
+                case kUpKey:
+                    setForegroundWindowRect([NSScreen mainScreen].visibleFrame);
+                    return NULL;
+            }
+        }
     }
-    else if (keycode == (CGKeyCode)6) {
-        keycode = (CGKeyCode)0;
-    }
-
-    // Set the modified keycode field in the event.
-    CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, (int64_t)keycode);
-
-    // We must return the event for it to be useful.
     return event;
 }
 
-/* Carbon includes everything necessary for Accessibilty API */
-#include <Carbon/Carbon.h>
-
-bool appIsAuthorized() {
-    return AXAPIEnabled() || AXIsProcessTrusted();
-}
-
+// Resize the main window of the foreground app.
 void setForegroundWindowRect(CGRect rect) {
     pid_t pid;
     ProcessSerialNumber psn;
@@ -83,32 +95,4 @@ void setForegroundWindowRect(CGRect rect) {
 
     CFRelease(window);
     CFRelease(app);
-}
-
-int main(int argc, const char **argv) {
-    int i;
-
-    if (!appIsAuthorized()) {
-        printf("Can't use accessibility API!\n");
-        return 1;
-    }
-
-    /* Give the user 5 seconds to switch to another window, otherwise
-     * only the terminal window will be used
-     */
-    for (i = 0; i < 5; i++) {
-        sleep(1);
-        printf("%d", i + 1);
-        if (i < 4) {
-            printf("...");
-            fflush(stdout);
-        } else {
-            printf("\n");
-        }
-    }
-
-    CGRect screenRect = [NSScreen mainScreen].visibleFrame;
-    CGRect leftScreenHalf = CGRectMake(0, 0, screenRect.size.width / 2, screenRect.size.height);
-    setForegroundWindowRect(leftScreenHalf);
-    return 0;
 }
