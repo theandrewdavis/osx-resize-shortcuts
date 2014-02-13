@@ -30,7 +30,6 @@
 		4904D95718A9891700E59ECE /* ResizeShortcuts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ResizeShortcuts; sourceTree = BUILT_PRODUCTS_DIR; };
 		4904D95A18A9891700E59ECE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4904D95D18A9891700E59ECE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		4904D96018A9891700E59ECE /* ResizeShortcuts-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ResizeShortcuts-Prefix.pch"; sourceTree = "<group>"; };
 		4904D96118A9891700E59ECE /* ResizeShortcuts.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ResizeShortcuts.1; sourceTree = "<group>"; };
 		4904D96818A98BC100E59ECE /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -87,7 +86,6 @@
 		4904D95F18A9891700E59ECE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				4904D96018A9891700E59ECE /* ResizeShortcuts-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -255,6 +253,7 @@
 				4904D96718A9891700E59ECE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
