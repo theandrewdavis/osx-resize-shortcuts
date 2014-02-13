@@ -10,7 +10,7 @@ Fit window to whole screen|Command+Option+Up|Windows+Up
 This will download the progam to /Applications, download a config file that will keep the program running across reboots, and start it up with `launchd`.
 ````
 curl -o /Applications/ResizeShortcuts https://github.com/theandrewdavis/osx-resize-windows/blob/master/Output/ResizeShortcuts?raw=true
-curl -o ~/Library/LaunchAgents/com.ResizeShortcuts.plist https://raw2.github.com/theandrewdavis/osx-resize-windows/master/Output/com.ResizeShortcuts.plist
+curl -o ~/Library/LaunchAgents/com.ResizeShortcuts.plist https://raw2.github.com/theandrewdavis/osx-resize-shortcuts/master/Output/com.ResizeShortcuts.plist
 launchctl load ~/Library/LaunchAgents/com.ResizeShortcuts.plist
 ````
 
