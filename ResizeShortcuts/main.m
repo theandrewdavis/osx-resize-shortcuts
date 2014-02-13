@@ -6,10 +6,7 @@
 //  Copyright (c) 2014 Andrew Davis. All rights reserved.
 //
 
-#include <ApplicationServices/ApplicationServices.h>
-#include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
-#include <Carbon/Carbon.h>
 
 CGEventRef keypressCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon);
 void setForegroundWindowRect(CGRect rect);
