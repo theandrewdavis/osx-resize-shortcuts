@@ -11,6 +11,7 @@ This will download the progam to /Applications, download a config file that will
 ````
 curl -L -o /Applications/ResizeShortcuts https://github.com/theandrewdavis/osx-resize-shortcuts/releases/download/0.1/ResizeShortcuts
 curl -L -o ~/Library/LaunchAgents/com.ResizeShortcuts.plist https://github.com/theandrewdavis/osx-resize-shortcuts/releases/download/0.1/com.ResizeShortcuts.plist
+chmod ug+x /Applications/ResizeShortcuts
 launchctl load ~/Library/LaunchAgents/com.ResizeShortcuts.plist
 ````
 
