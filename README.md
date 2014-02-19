@@ -24,7 +24,7 @@ rm -f /Applications/ResizeShortcuts ~/Library/LaunchAgents/com.ResizeShortcuts.p
 
 ## References
 I wrote this with the help of the several excellent code samples and references below:
-[Tapping keyboard events](http://stackoverflow.com/questions/1776567/osx-quartz-event-taps-event-types-and-how-to-edit-events)
-[Resizing windows and the Accessibility API](http://stackoverflow.com/questions/614185/window-move-and-resize-apis-in-os-x)
-[Get the screen size](http://stackoverflow.com/questions/4982656/programmatically-get-screen-size-in-mac-os-x)
-[launchd](http://launchd.info/)
+* [Tapping keyboard events](http://stackoverflow.com/questions/1776567/osx-quartz-event-taps-event-types-and-how-to-edit-events)
+* [Resizing windows and the Accessibility API](http://stackoverflow.com/questions/614185/window-move-and-resize-apis-in-os-x)
+* [Get the screen size](http://stackoverflow.com/questions/4982656/programmatically-get-screen-size-in-mac-os-x)
+* [launchd](http://launchd.info/)
