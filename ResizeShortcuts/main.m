@@ -96,14 +96,14 @@ void setForegroundWindowRect(CGRect rect) {
     // Get front app's front window.
     AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute, (CFTypeRef *)&window);
 
-    // Set window size.
-    axValue = AXValueCreate(kAXValueCGSizeType, &rect.size);
-    AXUIElementSetAttributeValue(window, kAXSizeAttribute, axValue);
-    CFRelease(axValue);
-
     // Set window position.
     axValue = AXValueCreate(kAXValueCGPointType, &rect.origin);
     AXUIElementSetAttributeValue(window, kAXPositionAttribute, axValue);
+    CFRelease(axValue);
+
+    // Set window size.
+    axValue = AXValueCreate(kAXValueCGSizeType, &rect.size);
+    AXUIElementSetAttributeValue(window, kAXSizeAttribute, axValue);
     CFRelease(axValue);
 
     CFRelease(window);
