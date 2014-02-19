@@ -9,8 +9,8 @@ Fit window to whole screen|Command+Option+Up|Windows+Up
 ### Install
 This will download the progam to /Applications, download a config file that will keep the program running across reboots, give the program execute permissions, and start it up with `launchd`.
 ````
-curl -L -o /Applications/ResizeShortcuts https://github.com/theandrewdavis/osx-resize-shortcuts/releases/download/0.1/ResizeShortcuts
-curl -L -o ~/Library/LaunchAgents/com.ResizeShortcuts.plist https://github.com/theandrewdavis/osx-resize-shortcuts/releases/download/0.1/com.ResizeShortcuts.plist
+curl -L -o /Applications/ResizeShortcuts https://github.com/theandrewdavis/osx-resize-shortcuts/releases/download/0.2/ResizeShortcuts
+curl -L -o ~/Library/LaunchAgents/com.ResizeShortcuts.plist https://github.com/theandrewdavis/osx-resize-shortcuts/releases/download/0.2/com.ResizeShortcuts.plist
 chmod ug+x /Applications/ResizeShortcuts
 launchctl load ~/Library/LaunchAgents/com.ResizeShortcuts.plist
 ````
