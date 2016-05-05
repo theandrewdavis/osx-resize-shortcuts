@@ -17,7 +17,8 @@ int main(int argc, const char **argv) {
     CFRunLoopSourceRef runLoopSource;
 
     // Make sure this app is authorized to use the accessibility API.
-    if (!AXAPIEnabled() && !AXIsProcessTrusted()) {
+    NSDictionary *options = @{(__bridge id)kAXTrustedCheckOptionPrompt: @YES};
+    if (!AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options)) {
         printf("Can't use accessibility API!\n");
         return 1;
     }
